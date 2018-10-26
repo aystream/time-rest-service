@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Преобразование float64 в duration
+// Добавление продолжительности в наше время
 func AddDurationInTimeByFloat64(duration float64, currentTime *models.ServerTime) (*models.ServerTime, error) {
 	if duration >= 1000000.0 {
 		return nil, errors.New(InvalidDurationFormat)
