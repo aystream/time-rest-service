@@ -11,44 +11,26 @@ func AddDurationInTimeByFloat64(duration float64, currentTime *models.ServerTime
 	if duration >= 1000000.0 {
 		return nil, errors.New(InvalidDurationFormat)
 	}
-	currentDuration := time.Duration(0)
 
-	currentDuration.Hours()
 	multiplier := 10000.0
 
-	var years, months, days, hours, minutes, seconds, milliseconds int
-	for i := 0; i < 5; i++ {
-		switch i {
-		case 0:
-			years = int(duration / multiplier)
-			duration = duration - float64(years)*multiplier
-		case 1:
-			months = int(duration / multiplier)
-			duration = duration - float64(months)*multiplier
-		case 2:
-			days = int(duration / multiplier)
-			duration = duration - float64(days)*multiplier
-		case 3:
-			hours = int(duration / multiplier)
-			duration = duration - float64(hours)*multiplier
-		case 4:
-			minutes = int(duration / multiplier)
-			duration = duration - float64(minutes)*multiplier
-		case 5:
-			seconds = int(duration / multiplier)
-			duration = duration - float64(seconds)*multiplier
-		case 6:
-			milliseconds = int(duration / multiplier)
-			duration = duration - float64(milliseconds)*multiplier
+	var parts [7]int
+	for i := 0; i < 7; i++ {
+		parts[i] = int(duration / multiplier)
+		if i == 5 {
+			// для учета милисекунд дальше нам нужно 3 знака
+			multiplier /= 1000
+			continue
 		}
-
-		multiplier = multiplier / 100
+		multiplier /= 100
 	}
 
 	year, month, day := currentTime.Time.Date()
 	hour, min, sec := currentTime.Time.Clock()
+	nanosecond := currentTime.Time.Nanosecond()
 
-	newTime := time.Date(year+years, month+time.Month(months), day+days, hour, min, sec, int(currentTime.Time.Nanosecond()), currentTime.Time.Location())
+	newTime := time.Date(year+parts[0], month+time.Month(parts[1]), day+parts[2], hour+parts[3], min+parts[4],
+		sec+parts[5], int(nanosecond)+parts[6]*1000, currentTime.Time.Location())
 
 	currentTime.Time = newTime
 	return currentTime, nil
