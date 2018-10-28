@@ -17,12 +17,13 @@ func AddDurationInTimeByFloat64(duration float64, currentTime *models.ServerTime
 	var parts [7]int
 	for i := 0; i < 7; i++ {
 		parts[i] = int(duration / multiplier)
+		duration -= float64(parts[i]) * multiplier
 		if i == 5 {
 			// для учета милисекунд дальше нам нужно 3 знака
 			multiplier /= 1000
-			continue
+		} else {
+			multiplier /= 100
 		}
-		multiplier /= 100
 	}
 
 	year, month, day := currentTime.Time.Date()
