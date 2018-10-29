@@ -64,6 +64,13 @@ func TestAddDurationInTimeByFloat64(t *testing.T) {
 			},
 			want: time.Date(2016, time.Month(10), 21, 00, 43, 50, 0, time.Now().Location()),
 		},
+		{
+			args: args{
+				duration:    99.99,
+				currentTime: time.Date(2018, time.Month(01), 01, 0, 0, 0, 0, time.Now().Location()),
+			},
+			want: time.Date(2018, time.Month(04), 14, 03, 0, 0, 0, time.Now().Location()),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
